@@ -1,0 +1,11 @@
+
+DEFINE std       /softslin/cdsincisiv15_20_035/tools/inca/files/STD
+DEFINE synopsys  /softslin/cdsincisiv15_20_035/tools/inca/files/SYNOPSYS
+DEFINE ieee      /softslin/cdsincisiv15_20_035/tools/inca/files/IEEE
+DEFINE ambit     /softslin/cdsincisiv15_20_035/tools/inca/files/AMBIT
+DEFINE vital_memory /softslin/cdsincisiv15_20_035/tools/inca/files/VITAL_MEMORY
+DEFINE ncutils /softslin/cdsincisiv15_20_035/tools/inca/files/NCUTILS
+DEFINE ncinternal /softslin/cdsincisiv15_20_035/tools/inca/files/NCINTERNAL
+DEFINE ncmodels /softslin/cdsincisiv15_20_035/tools/inca/files/NCMODELS
+DEFINE cds_assertions /softslin/cdsincisiv15_20_035/tools/inca/files/CDS_ASSERTIONS
+DEFINE worklib worklib

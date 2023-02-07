@@ -1,0 +1,83 @@
+library  ieee;
+use ieee.std_logic_1164.all;
+
+entity ALU is
+  generic(N : natural := 4);
+  port(
+    X, Y : in std_logic_vector(N-1 downto 0);
+    zx, zy, nx, ny, f, no : in std_logic;
+    S : out std_logic_vector(N-1 downto 0)
+  );
+end ALU;
+
+architecture bloc of ALU is
+
+  signal ModifIN1_out, ModifIN2_out : std_logic_vector (N-1 downto 0);
+  signal ADD_out, ET_out : std_logic_vector (N-1 downto 0);
+  signal Carry_add : std_logic;
+  signal mux1_out, mux2_out : std_logic_vector (N-1 downto 0);
+  signal inverse_out : std_logic_vector (N-1 downto 0);
+  
+  component ModifIN is
+    generic(N : natural := 4);
+    port(
+      X : in std_logic_vector(N-1 downto 0);
+      S : out std_logic_vector(N-1 downto 0);
+      zero, neg : in std_logic
+    );
+  end component;
+  component mux is
+    generic( N : natural := 4);
+    port(
+      D0, D1 : in std_logic_vector(N-1 downto 0);
+      C : in std_logic;
+      Y : out std_logic_vector(N-1 downto 0)
+    );
+  end component;
+  component inverseur_nbits is
+    generic(N : natural := 4);
+    port(
+    X : in std_logic_vector(N-1 downto 0);
+    InverseX : out std_logic_vector(N-1 downto 0)
+    );
+  end component;
+  component ADD_N is
+    generic (N: natural:=4);
+    port(
+      A, B  : in std_logic_vector (N-1 downto 0);
+      S : out std_logic_vector (N-1 downto 0);
+      Carry: out std_logic
+    );
+  end component;
+
+begin
+  ModifIN1_inst: ModifIN
+    generic map(N => N)
+    port map(X, ModifIN1_out, zx, nx);
+
+  ModifIN2_inst: ModifIN
+    generic map(N => N)
+    port map(Y, ModifIN2_out, zy, ny);
+
+  ADD_N_inst: ADD_N
+    generic map (N=>N)
+    port map(ModifIN1_out,ModifIN2_out,ADD_out,Carry_add);
+
+  ET_out <= ModifIN1_out and ModifIN2_out;
+
+  mux1_inst: mux 
+    generic map(N => N)
+    port map(ET_out, ADD_out , f, mux1_out);
+
+  inverseur_n_inst: inverseur_nbits 
+    generic map(N => N)
+    port map(mux1_out, inverse_out);
+  mux2_inst: mux 
+    generic map(N => N)
+    port map(mux1_out, inverse_out, no, mux2_out);
+  S <= mux2_out;
+end bloc;
+
+
+
+

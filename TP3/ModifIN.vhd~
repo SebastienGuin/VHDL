@@ -1,0 +1,56 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+----------------------------------------------------
+
+entity ModifIN is
+  generic(N : natural := 4);
+  port(
+    X : in std_logic_vector(N-1 downto 0);
+    S : out std_logic_vector(N-1 downto 0);
+    zero, neg : in std_logic
+  );
+end ModifIn;
+
+----------------------------------------------------
+
+architecture bloc of ModifIN is
+  signal sigzero : std_logic_vector(N-1 downto 0) := (others => '0');
+  signal mux0out : std_logic_vector(N-1 downto 0);
+  signal inverseout : std_logic_vector(N-1 downto 0);
+  signal mux1out : std_logic_vector(N-1 downto 0);
+
+  component mux is
+    generic( N : natural := 4);
+    port(
+      D0, D1 : in std_logic_vector(N-1 downto 0);
+      C : in bit;
+      Y : out std_logic_vector(N-1 downto 0)
+    );
+  end component;
+
+  component inverseur_nbits is
+    generic(N : natural := 4);
+    port(
+      X : in std_logic_vector(N-1 downto 0);
+      InverseX : out std_logic_vector(N-1 downto 0)
+    );    
+  end component;
+
+begin
+
+  mux0_inst: mux 
+    generic map(N => N)
+    port map(X, sigzero, zero, mux0out);
+  inverseur_n_inst: inverseur_nbits 
+    generic map(N => N)
+    port map(mux0out, inverseout);
+  mux1_inst: mux 
+    generic map(N => N)
+    port map(mux0out, inverseout, neg, mux1out);
+  S <= mux1out;
+
+end bloc;
+
+
+

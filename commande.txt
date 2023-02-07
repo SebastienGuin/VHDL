@@ -1,0 +1,20 @@
+cd ~/projet_vhdl/
+source .bashrc_cdsic616_ams410_isr15
+
+se mettre dans cd ~/SCR
+
+Ensuite compiler le programme.vhd: 
+comp_vhdl ../SRC_xpe2i5a010/exemples/exemples/InstDecodeur.vhd
+
+Ensuite compiler le testbench :
+comp_vhdl ../SRC_xpe2i5a010/exemples/exemples/InstDecodeur/InstDecodeur_tb.vhd
+
+L'archi se compile il faut 0 warning et 0 error.
+Le truc du milieu c'est l'entité compilé du testbench a prendre 
+
+Ensuite elaborer donc faire :
+elab_vhdl TP_LIB.INSTDECODEUR_TB -nowarn CUDEFB
+
+Puis pour tracer :
+ncsim -gui TP_LIB.INSTDECODEUR_TB &
+

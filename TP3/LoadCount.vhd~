@@ -1,0 +1,83 @@
+library  ieee;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_1164.all;
+
+entity LoadCount is
+  generic(N : natural := 4);
+  port(
+    X : in std_logic_vector(N-1 downto 0);
+    S : out std_logic_vector(N-1 downto 0);
+    clk, nrst : in std_logic;
+    st : in bit
+  );
+end LoadCount;
+
+architecture bloc of LoadCount is
+  signal incrementout : std_logic_vector(N-1 downto 0);
+  signal muxout : std_logic_vector(N-1 downto 0);
+  signal regout : std_logic_vector(N-1 downto 0);
+  signal enable : bit;
+
+  component increment is
+    generic (N: natural:=4);
+    port(
+	X  : in std_logic_vector (N-1 downto 0);
+	Xplus1: out std_logic_vector(N-1 downto 0)
+    );
+  end component;
+
+  component mux is
+    generic( N : natural := 4);
+    port(
+      D0, D1 : in std_logic_vector(N-1 downto 0);
+      C : in bit;
+      Y : out std_logic_vector(N-1 downto 0)
+    );
+  end component;
+
+  component registre is
+    generic(N : natural := 4);
+    port(
+      D : in std_logic_vector(N-1 downto 0);
+      load : in bit;
+      Q : out std_logic_vector(N-1 downto 0);
+      clk, nrst : in std_logic
+    );
+  end component;
+
+begin
+  enable <= not(st and '0');
+  mux_inst: mux
+    generic map(N => N)
+    port map (incrementout, X, st, muxout);
+  increment_inst: increment
+    generic map(N => N)
+    port map (regout, incrementout);
+  registre_inst: registre
+    generic map(N => N)
+    port map(muxout,enable,regout,clk,nrst);
+  S <= regout;
+end bloc;
+
+architecture bloc_process of LoadCount is
+  signal temp : std_logic_vector(N-1 downto 0);
+begin
+  process(clk, nrst, st)
+  begin
+    if(nrst='0') then
+      temp<=(others => '0');
+    else
+      if(rising_edge(clk) and clk='1') then
+        if(st = '1') then
+          temp<=X;
+	  else if (st = '0') then
+	    temp<=X;
+	    temp<=temp+1;
+	  end if;
+        end if;
+      end if;
+    end if;
+  end process;
+    S<=temp;
+end bloc_process;
+
